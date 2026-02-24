@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Biology Paper 1 - Revision Tracker</title>
+<style>
+  :root {
+    --red: #e74c3c;
+    --red-bg: #fdecea;
+    --amber: #f39c12;
+    --amber-bg: #fef5e7;
+    --green: #27ae60;
+    --green-bg: #eafaf1;
+    --grey: #bdc3c7;
+    --grey-bg: #f8f9fa;
+    --unit1: #3498db;
+    --unit2: #9b59b6;
+    --unit3: #e67e22;
+    --unit4: #1abc9c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f2f5;
+    color: #2c3e50;
+    line-height: 1.5;
+    padding-bottom: 80px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 24px 20px 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  header h1 {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  header .subtitle {
+    font-size: 0.85em;
+    opacity: 0.8;
+  }
+
+  .progress-bar-container {
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    height: 20px;
+    margin: 12px auto 8px;
+    max-width: 500px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .progress-bar-container .segment {
+    height: 100%;
+    transition: width 0.4s ease;
+  }
+
+  .progress-bar-container .seg-green { background: var(--green); }
+  .progress-bar-container .seg-amber { background: var(--amber); }
+  .progress-bar-container .seg-red { background: var(--red); }
+  .progress-bar-container .seg-grey { background: rgba(255,255,255,0.2); }
+
+  .progress-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.78em;
+    margin-top: 4px;
+  }
+
+  .progress-stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .progress-stats .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    color: #555;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .filter-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+  .filter-btn.active { color: white; }
+  .filter-btn.active[data-filter="all"] { background: #2c3e50; }
+  .filter-btn.active[data-filter="red"] { background: var(--red); }
+  .filter-btn.active[data-filter="amber"] { background: var(--amber); }
+  .filter-btn.active[data-filter="green"] { background: var(--green); }
+  .filter-btn.active[data-filter="unrated"] { background: #95a5a6; }
+
+  .unit {
+    margin: 16px 12px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  .unit-header {
+    padding: 14px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 1em;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+
+  .unit-header .unit-progress {
+    font-size: 0.75em;
+    font-weight: 400;
+    opacity: 0.9;
+  }
+
+  .unit-header .chevron {
+    transition: transform 0.3s;
+    font-size: 0.9em;
+  }
+
+  .unit-header .chevron.collapsed { transform: rotate(-90deg); }
+
+  .unit[data-unit="1"] .unit-header { background: var(--unit1); }
+  .unit[data-unit="2"] .unit-header { background: var(--unit2); }
+  .unit[data-unit="3"] .unit-header { background: var(--unit3); }
+  .unit[data-unit="4"] .unit-header { background: var(--unit4); }
+
+  .topic-group {
+    border-bottom: 1px solid #ecf0f1;
+  }
+
+  .topic-group:last-child { border-bottom: none; }
+
+  .topic-title {
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 0.9em;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .topic-title .topic-count {
+    font-size: 0.75em;
+    font-weight: 400;
+    color: #7f8c8d;
+  }
+
+  .spec-list {
+    list-style: none;
+  }
+
+  .spec-item {
+    padding: 10px 16px 10px 16px;
+    border-bottom: 1px solid #f0f2f5;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: background 0.2s;
+  }
+
+  .spec-item:last-child { border-bottom: none; }
+
+  .spec-item.rated-green { background: var(--green-bg); }
+  .spec-item.rated-amber { background: var(--amber-bg); }
+  .spec-item.rated-red { background: var(--red-bg); }
+
+  .spec-item .spec-text {
+    flex: 1;
+    font-size: 0.85em;
+    padding-top: 2px;
+  }
+
+  .spec-item .spec-id {
+    font-size: 0.7em;
+    color: #95a5a6;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 1px;
+  }
+
+  .spec-item .ho-tag {
+    font-size: 0.65em;
+    background: #e8daef;
+    color: #7d3c98;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .rag-buttons {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .rag-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .rag-btn:hover { transform: scale(1.15); }
+
+  .rag-btn.btn-red { background: var(--red-bg); border-color: var(--red); }
+  .rag-btn.btn-amber { background: var(--amber-bg); border-color: var(--amber); }
+  .rag-btn.btn-green { background: var(--green-bg); border-color: var(--green); }
+
+  .rag-btn.selected.btn-red { background: var(--red); }
+  .rag-btn.selected.btn-amber { background: var(--amber); }
+  .rag-btn.selected.btn-green { background: var(--green); }
+
+  .rag-btn.selected::after {
+    content: '\2713';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .practice-papers {
+    padding: 10px 16px 14px;
+    background: #fafbfc;
+    border-top: 1px solid #ecf0f1;
+  }
+
+  .bbc-links {
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .bbc-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .bbc-links a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .bbc-links a.bbc-guide {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+  }
+
+  .bbc-links a.bbc-quiz {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+  }
+
+  .bbc-links a.bbc-flash {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffcc80;
+  }
+
+  .practice-papers summary {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+
+  .practice-papers .paper-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .practice-papers a {
+    font-size: 0.75em;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: #2980b9;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .practice-papers a:hover {
+    background: #eaf2f8;
+    border-color: #2980b9;
+  }
+
+  .practice-papers a .tag {
+    font-size: 0.85em;
+    opacity: 0.6;
+  }
+
+  .reset-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #ddd;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8em;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  }
+
+  .reset-bar button {
+    background: none;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .reset-bar button:hover {
+    background: #fdecea;
+  }
+
+  .hidden { display: none !important; }
+
+  .unit-body.collapsed-body { display: none; }
+
+  @media (min-width: 600px) {
+    .unit { margin: 16px auto; max-width: 700px; }
+    .controls { padding: 12px 0; }
+    header h1 { font-size: 1.6em; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Biology Paper 1 Revision</h1>
+  <div class="subtitle">AQA GCSE Biology</div>
+  <div class="progress-bar-container" id="progressBar">
+    <div class="segment seg-green" id="segGreen"></div>
+    <div class="segment seg-amber" id="segAmber"></div>
+    <div class="segment seg-red" id="segRed"></div>
+    <div class="segment seg-grey" id="segGrey"></div>
+  </div>
+  <div class="progress-stats" id="progressStats"></div>
+</header>
+
+<div class="controls">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="red">Red</button>
+  <button class="filter-btn" data-filter="amber">Amber</button>
+  <button class="filter-btn" data-filter="green">Green</button>
+  <button class="filter-btn" data-filter="unrated">Not rated</button>
+</div>
+
+<div id="app"></div>
+
+<div class="reset-bar">
+  <span id="lastSaved">Progress auto-saved</span>
+  <button onclick="resetAll()">Reset all</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'bio-p1-revision-v2';
+
+const BBC = {
+  // Revision guides (AQA Single Science Biology)
+  guides: {
+    '1.1': [
+      { text: 'Cell structure', url: 'https://www.bbc.co.uk/bitesize/guides/z84jtv4/revision/1' },
+      { text: 'Cell structures (Combined)', url: 'https://www.bbc.co.uk/bitesize/guides/zxm3jty/revision/1' },
+    ],
+    '1.2': [
+      { text: 'Cell division', url: 'https://www.bbc.co.uk/bitesize/guides/zs8y4qt/revision/1' },
+      { text: 'Mitosis and cell specialisation', url: 'https://www.bbc.co.uk/bitesize/guides/zq4sk2p/revision/5' },
+    ],
+    '1.3': [
+      { text: 'Transport in cells', url: 'https://www.bbc.co.uk/bitesize/guides/zc7k2nb/revision/1' },
+      { text: 'Transport in cells (Combined)', url: 'https://www.bbc.co.uk/bitesize/guides/z22vw6f/revision/1' },
+    ],
+    '2.1': [
+      { text: 'Animal organisation - digestion', url: 'https://www.bbc.co.uk/bitesize/guides/zcttv9q/revision/1' },
+    ],
+    '2.2': [
+      { text: 'Digestion & enzymes', url: 'https://www.bbc.co.uk/bitesize/guides/zcttv9q/revision/1' },
+      { text: 'Heart & blood vessels', url: 'https://www.bbc.co.uk/bitesize/guides/zqnsrwx/revision/1' },
+      { text: 'Non-communicable diseases', url: 'https://www.bbc.co.uk/bitesize/guides/z372ng8/revision/1' },
+    ],
+    '2.3': [
+      { text: 'Plant organisation', url: 'https://www.bbc.co.uk/bitesize/guides/zyk8msg/revision/1' },
+      { text: 'Plant organisation (Combined)', url: 'https://www.bbc.co.uk/bitesize/guides/z2jydxs/revision/1' },
+    ],
+    '3.1': [
+      { text: 'Communicable diseases', url: 'https://www.bbc.co.uk/bitesize/guides/zxr7ng8/revision/1' },
+      { text: 'Defence & treatment', url: 'https://www.bbc.co.uk/bitesize/guides/z8fkmsg/revision/1' },
+      { text: 'Defence mechanisms', url: 'https://www.bbc.co.uk/bitesize/guides/zcmhxfr/revision/1' },
+    ],
+    '3.2': [
+      { text: 'Treating & preventing disease', url: 'https://www.bbc.co.uk/bitesize/guides/z8fkmsg/revision/1' },
+    ],
+    '3.3': [
+      { text: 'Plant disease', url: 'https://www.bbc.co.uk/bitesize/guides/z3tgw6f/revision/1' },
+      { text: 'Plant disease (Combined)', url: 'https://www.bbc.co.uk/bitesize/guides/zcyxb82/revision/1' },
+    ],
+    '4.1': [
+      { text: 'Photosynthesis', url: 'https://www.bbc.co.uk/bitesize/topics/zpffr82/articles/z6s26yc' },
+    ],
+    '4.2': [
+      { text: 'Respiration', url: 'https://www.bbc.co.uk/bitesize/topics/zpffr82/articles/zc8txbk' },
+    ],
+  },
+  // Interactive quizzes
+  quizzes: {
+    '1.1': [
+      { text: 'Quiz: Cell structure', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zq46ywx' },
+      { text: 'Quiz: Types of cell', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zv44qyc' },
+    ],
+    '1.2': [
+      { text: 'Quiz: Cell division', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zs6rwsg' },
+    ],
+    '1.3': [
+      { text: 'Quiz: Transport in cells', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zfb2nk7' },
+    ],
+    '2.2': [
+      { text: 'Quiz: Digestion', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zgndxg8' },
+      { text: 'Quiz: Transport systems 1', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/ztq3khv' },
+      { text: 'Quiz: Transport systems 2', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zv66ywx' },
+      { text: 'Quiz: Non-communicable diseases', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zhsjtcw' },
+    ],
+    '2.3': [
+      { text: 'Quiz: Plant organisation 1', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zv32nk7' },
+      { text: 'Quiz: Plant organisation 2', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zkvv9ty' },
+    ],
+    '3.1': [
+      { text: 'Quiz: Communicable diseases', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zjb2nk7' },
+      { text: 'Quiz: Disease prevention', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zp997v4' },
+      { text: 'Quiz: Vaccinations & antibiotics', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/zh6cjfr' },
+      { text: 'Quiz: Drug discovery', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/z8vv9ty' },
+    ],
+    '3.3': [
+      { text: 'Quiz: Plant disease', url: 'https://www.bbc.co.uk/bitesize/topics/zv3ydnb/articles/znjv9ty' },
+    ],
+  },
+  // Flashcard pages
+  flashcards: {
+    '1': 'https://www.bbc.co.uk/bitesize/topics/zmh3mbk/articles/zx8jvj6',
+    '2': 'https://www.bbc.co.uk/bitesize/topics/zmh3mbk/articles/zvh7b7h',
+    '3': 'https://www.bbc.co.uk/bitesize/topics/zmh3mbk/articles/zyp2g2p',
+    '4': 'https://www.bbc.co.uk/bitesize/topics/zmh3mbk/articles/zrgswsg',
+  },
+};
+
+const SPEC = [
+  {
+    unit: 1, title: 'B1: Cell Biology', topics: [
+      {
+        name: '1.1 Cell Structure',
+        papers: { F: ['1.1 Cell Structure (F) QP.pdf', '1.1 Cell Structure (F) MS.pdf'], H: ['1.1 Cell Structure (H) QP.pdf', '1.1 Cell Structure (H) MS.pdf'] },
+        items: [
+          { id: '1.1.1', text: 'Know the structure of eukaryotic animal cells: cell membrane, cytoplasm, nucleus, mitochondria, ribosomes' },
+          { id: '1.1.2', text: 'Know the structure of eukaryotic plant cells: cell wall, cell membrane, cytoplasm, nucleus, mitochondria, ribosomes, chloroplasts, permanent vacuole' },
+          { id: '1.1.3', text: 'Know that eukaryotic cells have a cell membrane, cytoplasm and genetic material enclosed in a nucleus' },
+          { id: '1.1.4', text: 'Know that prokaryotic cells (bacteria) are much smaller; DNA is not enclosed in a nucleus; may have plasmid DNA; single DNA loop; cell membrane, cytoplasm, cell wall' },
+          { id: '1.1.5', text: 'Understand the function of each sub-cellular structure' },
+          { id: '1.1.6', text: 'Understand the differences between eukaryotic and prokaryotic cells' },
+          { id: '1.1.7', text: 'Use a light microscope to observe and draw cells', ho: true },
+          { id: '1.1.8', text: 'Use the formula: magnification = size of image / size of real object' },
+          { id: '1.1.9', text: 'Express answers in standard form and convert between units (mm, \u00b5m, nm)' },
+          { id: '1.1.10', text: 'Explain how electron microscopy has increased understanding of sub-cellular structures' },
+          { id: '1.1.11', text: 'Know the order of magnitude of eukaryotic cells, prokaryotic cells and viruses' },
+        ]
+      },
+      {
+        name: '1.2 Cell Division',
+        papers: { H: ['1.2 Cell Division (H) QP.pdf', '1.2 Cell Division (H) MS.pdf'] },
+        items: [
+          { id: '1.2.1', text: 'Know that cells divide by mitosis for growth and repair in multicellular organisms' },
+          { id: '1.2.2', text: 'Understand the cell cycle: cell grows, DNA replicates, organelles increase, then divides by mitosis into two identical daughter cells' },
+          { id: '1.2.3', text: 'Know that chromosomes are copied and then divided between two daughter cells' },
+          { id: '1.2.4', text: 'Understand stem cells in embryos can differentiate into any cell type' },
+          { id: '1.2.5', text: 'Know that in mature animals most cells are differentiated; many plant cells retain the ability to differentiate' },
+          { id: '1.2.6', text: 'Understand the use of stem cells in medicine (therapeutic cloning, treating conditions)', ho: true },
+          { id: '1.2.7', text: 'Evaluate the risks and benefits of using stem cells in medicine' },
+          { id: '1.2.8', text: 'Know that stem cells from plant meristems can be used to produce clones quickly and economically' },
+        ]
+      },
+      {
+        name: '1.3 Transport in Cells',
+        papers: { F: ['1.3 Transport in Cells (F) QP.pdf', '1.3 Transport in Cells (F) MS.pdf'], H: ['1.3 Transport in Cells (H) QP.pdf', '1.3 Transport in Cells (H) MS.pdf'] },
+        items: [
+          { id: '1.3.1', text: 'Understand diffusion as the spreading out of particles from high to low concentration' },
+          { id: '1.3.2', text: 'Know factors affecting rate of diffusion: concentration gradient, temperature, surface area of membrane' },
+          { id: '1.3.3', text: 'Know that diffusion occurs across cell membranes (oxygen, carbon dioxide, dissolved substances)' },
+          { id: '1.3.4', text: 'Understand osmosis as the movement of water from a dilute to a concentrated solution through a partially permeable membrane' },
+          { id: '1.3.5', text: 'Describe and explain the effect of osmosis on plant and animal cells' },
+          { id: '1.3.6', text: 'Use simple calculations to determine water uptake/loss (percentage change in mass)' },
+          { id: '1.3.7', text: 'Understand active transport: movement of substances from low to high concentration (against the gradient) using energy from respiration' },
+          { id: '1.3.8', text: 'Explain how active transport is used in the gut (absorbing sugar) and root hair cells (absorbing mineral ions)' },
+          { id: '1.3.9', text: 'Compare diffusion, osmosis and active transport' },
+        ]
+      },
+    ]
+  },
+  {
+    unit: 2, title: 'B2: Organisation', topics: [
+      {
+        name: '2.1 Principles of Organisation',
+        papers: { F: ['2.1 Principles of Organisation (F) QP.pdf', '2.1 Principles of Organisation (F) MS.pdf'] },
+        items: [
+          { id: '2.1.1', text: 'Understand the organisational hierarchy: cells \u2192 tissues \u2192 organs \u2192 organ systems \u2192 organisms' },
+          { id: '2.1.2', text: 'Know that a tissue is a group of similar cells working together' },
+          { id: '2.1.3', text: 'Know that an organ contains several types of tissue working together' },
+          { id: '2.1.4', text: 'Know that organ systems work together to form organisms' },
+        ]
+      },
+      {
+        name: '2.2 Animal Tissues, Organs & Systems',
+        papers: { F: ['2.2 Animal Tissues, Organs & Systems (F) QP.pdf', '2.2 Animal Tissues, Organs & Systems (F) MS.pdf'], H: ['2.2 Animal Tissues, Organs & Systems (H) QP.pdf', '2.2 Animal Tissues, Organs & Systems (H) MS.pdf'] },
+        items: [
+          { id: '2.2.1', text: 'Know the human digestive system: mouth, oesophagus, stomach, small intestine (+ pancreas, liver, gall bladder), large intestine' },
+          { id: '2.2.2', text: 'Know the function of digestive enzymes: amylase (starch \u2192 sugars), protease (proteins \u2192 amino acids), lipase (lipids \u2192 glycerol + fatty acids)' },
+          { id: '2.2.3', text: 'Know where enzymes are produced (salivary glands, pancreas, stomach, small intestine)' },
+          { id: '2.2.4', text: 'Understand the role of bile: produced by liver, stored in gall bladder, neutralises stomach acid, emulsifies fats' },
+          { id: '2.2.5', text: 'Understand the lock and key model of enzyme action and the effect of temperature and pH on enzyme activity' },
+          { id: '2.2.6', text: 'Explain the consequences of denaturation of enzymes' },
+          { id: '2.2.7', text: 'Know the structure and function of the heart: chambers, valves, blood vessels (aorta, vena cava, pulmonary artery/vein)' },
+          { id: '2.2.8', text: 'Know the components of blood: plasma, red blood cells, white blood cells, platelets and their functions' },
+          { id: '2.2.9', text: 'Know the structure and function of arteries, veins and capillaries' },
+          { id: '2.2.10', text: 'Know that coronary heart disease is caused by fatty deposits in coronary arteries; treatments include stents and statins' },
+          { id: '2.2.11', text: 'Evaluate treatments for cardiovascular disease: lifestyle changes, medication, surgery, transplants, artificial hearts' },
+          { id: '2.2.12', text: 'Understand health as a state of physical and mental wellbeing; the difference between communicable and non-communicable diseases' },
+          { id: '2.2.13', text: 'Know risk factors for non-communicable diseases (diet, smoking, alcohol, lack of exercise) and their links to disease' },
+          { id: '2.2.14', text: 'Understand the concept of risk factors and causal mechanisms (e.g., smoking and lung cancer/CVD, obesity and type 2 diabetes, alcohol and liver damage, carcinogens and cancer)' },
+        ]
+      },
+      {
+        name: '2.3 Plant Tissues, Organs & Systems',
+        papers: { F: ['2.3 Plant Tissues, Organs & Systems (F) QP.pdf', '2.3 Plant Tissues, Organs & Systems (F) MS.pdf'], H: ['2.3 Plant Tissues, Organs & Systems (H) QP.pdf', '2.3 Plant Tissues, Organs & Systems (H) MS.pdf'] },
+        items: [
+          { id: '2.3.1', text: 'Know plant tissues: epidermal, palisade mesophyll, spongy mesophyll, xylem, phloem, meristem' },
+          { id: '2.3.2', text: 'Know plant organs: roots, stems, leaves' },
+          { id: '2.3.3', text: 'Understand the role of xylem: transports water and mineral ions from roots to leaves (transpiration stream)' },
+          { id: '2.3.4', text: 'Understand the role of phloem: transports dissolved sugars from leaves to the rest of the plant (translocation)' },
+          { id: '2.3.5', text: 'Explain how the leaf is adapted for photosynthesis (large surface area, thin, chloroplasts, air spaces, stomata, guard cells, vascular bundles)' },
+          { id: '2.3.6', text: 'Understand transpiration and factors affecting the rate: temperature, humidity, air movement, light intensity' },
+          { id: '2.3.7', text: 'Describe how guard cells open and close stomata to control gas exchange and water loss' },
+        ]
+      },
+    ]
+  },
+  {
+    unit: 3, title: 'B3: Infection and Response', topics: [
+      {
+        name: '3.1 Communicable Diseases',
+        papers: { F: ['3.1 Communicable Diseases (F) QP.pdf', '3.1 Communicable Diseases (F) MS.pdf'], H: ['3.1 Communicable Diseases (H) QP.pdf', '3.1 Communicable Diseases (H) MS.pdf'] },
+        items: [
+          { id: '3.1.1', text: 'Know that communicable diseases are caused by pathogens: bacteria, viruses, fungi, protists' },
+          { id: '3.1.2', text: 'Know how pathogens are spread: direct contact, water, air, vectors' },
+          { id: '3.1.3', text: 'Know examples of viral diseases: measles, HIV, tobacco mosaic virus (TMV)' },
+          { id: '3.1.4', text: 'Know examples of bacterial diseases: salmonella, gonorrhoea' },
+          { id: '3.1.5', text: 'Know examples of fungal diseases: rose black spot' },
+          { id: '3.1.6', text: 'Know an example of a protist disease: malaria (spread by mosquito vectors)' },
+          { id: '3.1.7', text: 'Know how the body defends itself: skin barrier, nose hairs and mucus, trachea cilia and mucus, stomach acid' },
+          { id: '3.1.8', text: 'Know the immune system response: white blood cells - phagocytosis, antibody production, antitoxin production' },
+          { id: '3.1.9', text: 'Understand vaccination: introducing dead/inactive pathogens to stimulate white blood cells to produce antibodies; memory cells provide immunity' },
+          { id: '3.1.10', text: 'Understand the role of antibiotics (kill bacteria, not viruses) and painkillers (treat symptoms, not cause)' },
+          { id: '3.1.11', text: 'Know that antibiotic-resistant bacteria (e.g. MRSA) are a concern; reducing antibiotic use to slow resistance' },
+          { id: '3.1.12', text: 'Understand how new drugs are developed: discovery, preclinical testing (cells, tissues, animals), clinical trials (healthy volunteers then patients), double-blind trials, placebos' },
+        ]
+      },
+      {
+        name: '3.2 Monoclonal Antibodies',
+        papers: { H: ['3.2 Monoclonal Antibodies (H) QP.pdf', '3.2 Monoclonal Antibodies (H) MS.pdf'] },
+        items: [
+          { id: '3.2.1', text: 'Know that monoclonal antibodies are produced from a single clone of cells (hybridoma cells)', ho: true },
+          { id: '3.2.2', text: 'Know how monoclonal antibodies are produced: mouse lymphocytes + tumour cells = hybridoma cells', ho: true },
+          { id: '3.2.3', text: 'Know uses: pregnancy tests, lab diagnosis, treating diseases (e.g. cancer), locating specific molecules in cells/blood', ho: true },
+        ]
+      },
+      {
+        name: '3.3 Plant Disease',
+        papers: { F: ['3.3 Plant Disease (F) QP.pdf', '3.3 Plant Disease (F) MS.pdf'], H: ['3.3 Plant Disease (H) QP.pdf', '3.3 Plant Disease (H) MS.pdf'] },
+        items: [
+          { id: '3.3.1', text: 'Know that plants can be infected by viral, bacterial and fungal pathogens and by insect pests' },
+          { id: '3.3.2', text: 'Know how to identify plant diseases: stunted growth, spots on leaves, areas of decay, growths, discolouration, malformed stems/leaves, presence of pests' },
+          { id: '3.3.3', text: 'Know that ion deficiency can cause plant diseases (e.g. nitrate deficiency causes stunted growth, magnesium deficiency causes chlorosis/yellow leaves)' },
+          { id: '3.3.4', text: 'Know plant defence responses: physical (cellulose cell walls, waxy cuticle, bark), chemical (antibacterial chemicals, poisons, toxins), mechanical (thorns, curling leaves, mimicry)' },
+        ]
+      },
+    ]
+  },
+  {
+    unit: 4, title: 'B4: Bioenergetics', topics: [
+      {
+        name: '4.1 Photosynthesis',
+        papers: { F: ['4.1 Photosynthesis (F) QP.pdf', '4.1 Photosynthesis (F) MS.pdf'], H: ['4.1 Photosynthesis (H) QP.pdf', '4.1 Photosynthesis (H) MS.pdf'] },
+        items: [
+          { id: '4.1.1', text: 'Know the photosynthesis equation: carbon dioxide + water \u2192 glucose + oxygen (using light energy)' },
+          { id: '4.1.2', text: 'Know that photosynthesis is an endothermic reaction; energy is transferred from the environment to chloroplasts by light' },
+          { id: '4.1.3', text: 'Know the uses of glucose: respiration, making cellulose (cell walls), making amino acids (with nitrate ions), stored as starch, stored as lipids (fats/oils)' },
+          { id: '4.1.4', text: 'Understand limiting factors of photosynthesis: light intensity, carbon dioxide concentration, temperature' },
+          { id: '4.1.5', text: 'Interpret graphs of limiting factors and explain the shape of the curves' },
+          { id: '4.1.6', text: 'Understand the inverse square law relating light intensity to distance', ho: true },
+          { id: '4.1.7', text: 'Know how limiting factors are important in the economics of greenhouses (artificial light, heating, CO\u2082 enrichment)' },
+        ]
+      },
+      {
+        name: '4.2 Respiration',
+        papers: { F: ['4.2 Respiration (F) QP.pdf', '4.2 Respiration (F) MS.pdf'], H: ['4.2 Respiration (H) QP.pdf', '4.2 Respiration (H) MS.pdf'] },
+        items: [
+          { id: '4.2.1', text: 'Know that respiration is an exothermic reaction that occurs continuously in all living cells to transfer energy' },
+          { id: '4.2.2', text: 'Know the uses of energy from respiration: chemical reactions to build larger molecules, movement (muscle contraction), keeping warm, active transport' },
+          { id: '4.2.3', text: 'Know the word and symbol equation for aerobic respiration: glucose + oxygen \u2192 carbon dioxide + water' },
+          { id: '4.2.4', text: 'Know that aerobic respiration takes place in the mitochondria' },
+          { id: '4.2.5', text: 'Know the word equation for anaerobic respiration in animals: glucose \u2192 lactic acid' },
+          { id: '4.2.6', text: 'Know the word equation for anaerobic respiration in plants and yeast (fermentation): glucose \u2192 ethanol + carbon dioxide' },
+          { id: '4.2.7', text: 'Understand that during exercise: heart rate, breathing rate and breath volume increase to supply muscles with more oxygenated blood' },
+          { id: '4.2.8', text: 'Understand oxygen debt: after vigorous exercise, extra oxygen is needed to react with the accumulated lactic acid and remove it' },
+          { id: '4.2.9', text: 'Know that metabolism is the sum of all chemical reactions in a cell or the body' },
+          { id: '4.2.10', text: 'Know examples of metabolic reactions: conversion of glucose to starch/glycogen/cellulose, formation of lipids, use of glucose and nitrate ions to form amino acids, respiration, photosynthesis, protein synthesis from amino acids, breakdown of excess proteins to form urea' },
+        ]
+      },
+    ]
+  }
+];
+
+// Count all items
+const ALL_ITEMS = [];
+SPEC.forEach(u => u.topics.forEach(t => t.items.forEach(i => ALL_ITEMS.push(i.id))));
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const now = new Date();
+  document.getElementById('lastSaved').textContent = 'Saved ' + now.toLocaleTimeString();
+}
+
+let state = loadState();
+let currentFilter = 'all';
+
+function getRating(id) { return state[id] || null; }
+
+function setRating(id, rating) {
+  if (state[id] === rating) {
+    delete state[id];
+  } else {
+    state[id] = rating;
+  }
+  saveState(state);
+  updateUI();
+}
+
+function updateProgress() {
+  let g = 0, a = 0, r = 0, n = 0;
+  ALL_ITEMS.forEach(id => {
+    const v = state[id];
+    if (v === 'green') g++;
+    else if (v === 'amber') a++;
+    else if (v === 'red') r++;
+    else n++;
+  });
+  const total = ALL_ITEMS.length;
+  document.getElementById('segGreen').style.width = (g / total * 100) + '%';
+  document.getElementById('segAmber').style.width = (a / total * 100) + '%';
+  document.getElementById('segRed').style.width = (r / total * 100) + '%';
+  document.getElementById('segGrey').style.width = (n / total * 100) + '%';
+  document.getElementById('progressStats').innerHTML =
+    `<span><span class="dot" style="background:var(--green)"></span> ${g} confident</span>
+     <span><span class="dot" style="background:var(--amber)"></span> ${a} almost</span>
+     <span><span class="dot" style="background:var(--red)"></span> ${r} need work</span>
+     <span><span class="dot" style="background:var(--grey)"></span> ${n} unrated</span>`;
+}
+
+function itemVisible(id) {
+  if (currentFilter === 'all') return true;
+  const v = state[id] || 'unrated';
+  return v === currentFilter || (currentFilter === 'unrated' && !state[id]);
+}
+
+function renderApp() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  SPEC.forEach(unit => {
+    const unitEl = document.createElement('div');
+    unitEl.className = 'unit';
+    unitEl.dataset.unit = unit.unit;
+
+    // count unit progress
+    let uTotal = 0, uGreen = 0;
+    unit.topics.forEach(t => t.items.forEach(i => { uTotal++; if (state[i.id] === 'green') uGreen++; }));
+
+    unitEl.innerHTML = `<div class="unit-header" data-toggle="unit-${unit.unit}">
+      <span>${unit.title}</span>
+      <span>
+        <span class="unit-progress">${uGreen}/${uTotal} confident</span>
+        <span class="chevron">\u25BC</span>
+      </span>
+    </div>`;
+
+    const body = document.createElement('div');
+    body.className = 'unit-body';
+    body.id = 'unit-' + unit.unit;
+
+    unit.topics.forEach(topic => {
+      const group = document.createElement('div');
+      group.className = 'topic-group';
+
+      // count topic items visible
+      const visibleCount = topic.items.filter(i => itemVisible(i.id)).length;
+      if (visibleCount === 0 && currentFilter !== 'all') return;
+
+      const topicGreen = topic.items.filter(i => state[i.id] === 'green').length;
+
+      group.innerHTML = `<div class="topic-title">
+        <span>${topic.name}</span>
+        <span class="topic-count">${topicGreen}/${topic.items.length}</span>
+      </div>`;
+
+      const list = document.createElement('ul');
+      list.className = 'spec-list';
+
+      topic.items.forEach(item => {
+        if (!itemVisible(item.id)) return;
+        const rating = getRating(item.id);
+        const li = document.createElement('li');
+        li.className = 'spec-item' + (rating ? ' rated-' + rating : '');
+        li.innerHTML = `
+          <div class="spec-text">
+            <span class="spec-id">${item.id}${item.ho ? ' <span class="ho-tag">Higher only</span>' : ''}</span>
+            ${item.text}
+          </div>
+          <div class="rag-buttons">
+            <button class="rag-btn btn-red${rating === 'red' ? ' selected' : ''}" title="Need to learn" data-id="${item.id}" data-rating="red"></button>
+            <button class="rag-btn btn-amber${rating === 'amber' ? ' selected' : ''}" title="Almost there" data-id="${item.id}" data-rating="amber"></button>
+            <button class="rag-btn btn-green${rating === 'green' ? ' selected' : ''}" title="Confident" data-id="${item.id}" data-rating="green"></button>
+          </div>`;
+        list.appendChild(li);
+      });
+
+      group.appendChild(list);
+
+      // BBC Bitesize links
+      const topicId = topic.name.split(' ')[0]; // e.g. "1.1"
+      const unitNum = topicId.split('.')[0];     // e.g. "1"
+      const guides = BBC.guides[topicId] || [];
+      const quizzes = BBC.quizzes[topicId] || [];
+      const flashUrl = BBC.flashcards[unitNum];
+
+      if (guides.length || quizzes.length || flashUrl) {
+        const bbcDiv = document.createElement('div');
+        bbcDiv.className = 'bbc-links';
+        guides.forEach(g => {
+          bbcDiv.innerHTML += `<a class="bbc-guide" href="${g.url}" target="_blank" rel="noopener">\uD83D\uDCD7 ${g.text}</a>`;
+        });
+        quizzes.forEach(q => {
+          bbcDiv.innerHTML += `<a class="bbc-quiz" href="${q.url}" target="_blank" rel="noopener">\u2753 ${q.text}</a>`;
+        });
+        if (flashUrl) {
+          bbcDiv.innerHTML += `<a class="bbc-flash" href="${flashUrl}" target="_blank" rel="noopener">\uD83C\uDCCF Flashcards</a>`;
+        }
+        group.appendChild(bbcDiv);
+      }
+
+      // Practice papers
+      if (topic.papers) {
+        const pp = document.createElement('div');
+        pp.className = 'practice-papers';
+        let linksHtml = '';
+        for (const [tier, files] of Object.entries(topic.papers)) {
+          files.forEach(f => {
+            const label = f.replace('.pdf', '');
+            const isMS = f.includes(' MS');
+            linksHtml += `<a href="resources/${encodeURIComponent(f)}" target="_blank">${tier === 'F' ? 'Foundation' : 'Higher'} ${isMS ? 'Mark Scheme' : 'Questions'}</a>`;
+          });
+        }
+        pp.innerHTML = `<details><summary>Practice papers for ${topic.name}</summary><div class="paper-links">${linksHtml}</div></details>`;
+        group.appendChild(pp);
+      }
+
+      body.appendChild(group);
+    });
+
+    unitEl.appendChild(body);
+    app.appendChild(unitEl);
+  });
+}
+
+function updateUI() {
+  updateProgress();
+  renderApp();
+}
+
+// Event delegation
+document.addEventListener('click', e => {
+  // RAG buttons
+  if (e.target.classList.contains('rag-btn')) {
+    setRating(e.target.dataset.id, e.target.dataset.rating);
+    return;
+  }
+  // Unit collapse
+  if (e.target.closest('.unit-header')) {
+    const hdr = e.target.closest('.unit-header');
+    const bodyId = hdr.dataset.toggle;
+    const body = document.getElementById(bodyId);
+    const chevron = hdr.querySelector('.chevron');
+    if (body) {
+      body.classList.toggle('collapsed-body');
+      chevron.classList.toggle('collapsed');
+    }
+  }
+});
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    updateUI();
+  });
+});
+
+function resetAll() {
+  if (confirm('Are you sure you want to reset ALL your ratings? This cannot be undone.')) {
+    state = {};
+    saveState(state);
+    updateUI();
+  }
+}
+
+// Initial render
+updateUI();
+</script>
+</body>
+</html>
