@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geography – Year 10 Spring Assessment Revision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f3f0;
+    color: #1a1a1a;
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .header {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  .header .progress {
+    font-size: 0.82rem;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-bar-bg {
+    width: 100px;
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: #4ade80;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .cell {
+    padding: 28px 32px;
+    border-bottom: 1px solid #e8e5e1;
+  }
+
+  .cell:nth-child(odd) {
+    border-right: 1px solid #e8e5e1;
+  }
+
+  .cell-header {
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #888;
+    margin-bottom: 16px;
+  }
+
+  .cell ul, .cell ol {
+    list-style: none;
+    padding: 0;
+  }
+
+  .topic-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .topic-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-top: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .topic-item input[type="checkbox"]:checked {
+    background: #4ade80;
+    border-color: #22c55e;
+  }
+
+  .topic-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -1px;
+    left: 2px;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .topic-item.checked .item-text {
+    text-decoration: line-through;
+    opacity: 0.45;
+  }
+
+  .item-text {
+    flex: 1;
+    transition: opacity 0.3s;
+  }
+
+  .bullet-item {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 8px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .bullet-item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #c0392b;
+    font-weight: 700;
+  }
+
+  .cell a {
+    color: #2563eb;
+    text-decoration: none;
+    border-bottom: 1px solid #2563eb33;
+    transition: border-color 0.2s;
+  }
+
+  .cell a:hover {
+    border-bottom-color: #2563eb;
+  }
+
+  .sub-list {
+    margin-top: 6px;
+    margin-left: 8px;
+    list-style: none;
+  }
+
+  .sub-list li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 5px;
+    font-size: 0.88rem;
+  }
+
+  .sub-list li::before {
+    content: '○';
+    position: absolute;
+    left: 0;
+    font-size: 0.75rem;
+    color: #999;
+  }
+
+  .note {
+    font-size: 0.88rem;
+    color: #555;
+    margin-top: 12px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .reset-btn {
+    display: block;
+    margin: 16px auto;
+    padding: 8px 20px;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.78rem;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: #c0392b;
+    color: #c0392b;
+  }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .cell:nth-child(odd) { border-right: none; }
+    .header { flex-direction: column; gap: 10px; text-align: center; }
+    .header .progress { justify-content: center; }
+    body { padding: 20px 12px; }
+    .cell { padding: 22px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Geography</h1>
+    <div class="progress">
+      <span id="progress-text">0 / 0</span>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- Topics to revise -->
+    <div class="cell">
+      <div class="cell-header">Topics to revise</div>
+      <ul>
+        <li class="topic-item" data-key="topic-climate">
+          <input type="checkbox" aria-label="Climate">
+          <span class="item-text">Climate</span>
+        </li>
+        <li class="topic-item" data-key="topic-cyclones">
+          <input type="checkbox" aria-label="Tropical Cyclones">
+          <span class="item-text">Tropical Cyclones, including case studies – Typhoon Haiyan and Hurricane Katrina</span>
+        </li>
+        <li class="topic-item" data-key="topic-tectonics">
+          <input type="checkbox" aria-label="Tectonics">
+          <span class="item-text">Tectonics: earthquakes and volcanoes, including case studies – Haiti 2010, and Japan 2011</span>
+        </li>
+        <li class="topic-item" data-key="topic-urbanising">
+          <input type="checkbox" aria-label="Challenges of an urbanising world">
+          <span class="item-text">Challenges of an urbanising world</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Key revision activities -->
+    <div class="cell">
+      <div class="cell-header">Key revision activities</div>
+      <ul>
+        <li class="topic-item" data-key="activity-mindmaps">
+          <input type="checkbox" aria-label="Create mindmaps">
+          <span class="item-text">1) Create mindmaps of the hazardous earth case studies using the knowledge organisers</span>
+        </li>
+        <li class="topic-item" data-key="activity-questions">
+          <input type="checkbox" aria-label="Complete practise questions">
+          <span class="item-text">2) Complete the printed practise questions that your teacher will give you</span>
+        </li>
+        <li class="topic-item" data-key="activity-flashcards">
+          <input type="checkbox" aria-label="Use flashcards">
+          <span class="item-text">3) Use the revision flashcards slides and 'retrieval practise mode' to revise the topics that you feel least confident on</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Resources and links -->
+    <div class="cell">
+      <div class="cell-header">Resources and links</div>
+      <ul>
+        <li class="topic-item" data-key="res-climate">
+          <input type="checkbox" aria-label="Climate Slides">
+          <span class="item-text">Climate <a href="https://docs.google.com/presentation/d/1Yu_JtKfGGPu9KTZ7YrVS2kOh--o0llRPw9Fk2vWdG8o/edit?usp=drive_link" target="_blank" rel="noopener">Slides</a></span>
+        </li>
+        <li class="topic-item" data-key="res-cyclone-slides">
+          <input type="checkbox" aria-label="Tropical Cyclone slides">
+          <span class="item-text">Tropical Cyclone <a href="https://docs.google.com/presentation/d/1sXXNhwTkMxd7cXaBgYhLWMfClfJNivUmIDdtnqCL5Wk/edit?usp=drive_link" target="_blank" rel="noopener">slides</a></span>
+        </li>
+        <li class="topic-item" data-key="res-cyclone-ko">
+          <input type="checkbox" aria-label="Cyclones Knowledge Organiser">
+          <span class="item-text">Cyclones case studies <a href="https://docs.google.com/document/d/1nFcvt3gfxo0qlYb-Ft9TrGcvtGF2UIXCI717EPjHFGw/edit?usp=sharing" target="_blank" rel="noopener">Knowledge Organiser</a></span>
+        </li>
+        <li class="topic-item" data-key="res-tectonics-slides">
+          <input type="checkbox" aria-label="Tectonics Slides">
+          <span class="item-text">Tectonics <a href="https://docs.google.com/presentation/d/1A8i7YTEcZYbZBDDgOTyVVD4nVIFNYtZdvX7EP7iJ3so/edit?usp=drive_link" target="_blank" rel="noopener">Slides</a></span>
+        </li>
+        <li class="topic-item" data-key="res-tectonics-ko">
+          <input type="checkbox" aria-label="Tectonics case studies">
+          <span class="item-text">Tectonics case studies <a href="https://docs.google.com/presentation/d/1svBB0G6kqysK7oxYSkoCKmrugW2GN2_XeoLc7WY6CIY/edit?usp=drive_link" target="_blank" rel="noopener">slides</a> and <a href="https://docs.google.com/document/d/17Ii0IgF-bgAPjpxaA4jh5mXnInAuMVtUdCRVmZYrVZo/edit?usp=sharing" target="_blank" rel="noopener">knowledge organiser</a></span>
+        </li>
+        <li class="topic-item" data-key="res-urbanising">
+          <input type="checkbox" aria-label="Challenges of an urbanising world slides">
+          <span class="item-text">Challenges of an urbanising world <a href="https://docs.google.com/presentation/d/1svBB0G6kqysK7oxYSkoCKmrugW2GN2_XeoLc7WY6CIY/edit?usp=drive_link" target="_blank" rel="noopener">slides</a></span>
+        </li>
+      </ul>
+      <p class="note">Link to all GCSE knowledge organisers, past papers, videos, and revision slides is <a href="https://docs.google.com/document/d/1alPVlop_r-TesaVbmSDmkzbf7FiuE6uwUhePzcyDZ24/edit?tab=t.0" target="_blank" rel="noopener">here</a></p>
+    </div>
+
+    <!-- What will the assessment look like? -->
+    <div class="cell">
+      <div class="cell-header">What will the assessment look like?</div>
+      <div class="bullet-item">52 marks – 55 minutes long.</div>
+      <div class="bullet-item">You will complete the 'hazardous earth' and 'challenges of an urbanising world' sections of Paper 1</div>
+      <div class="bullet-item">You will have a mixture of question styles including:
+        <ul class="sub-list">
+          <li>Short answer questions (2–4 marks)</li>
+          <li>One 8 mark essay question using case studies</li>
+          <li>Multiple choice</li>
+          <li>Graphs / maps / charts analysis</li>
+          <li>Numeracy</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="reset-btn" id="reset-btn">Reset all checkboxes</button>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'geo-revision-checks';
+
+  function loadState() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch { return {}; }
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('.topic-item');
+    const checked = document.querySelectorAll('.topic-item input:checked').length;
+    document.getElementById('progress-text').textContent = checked + ' / ' + items.length;
+    const pct = items.length ? (checked / items.length) * 100 : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+
+  function init() {
+    const state = loadState();
+    const items = document.querySelectorAll('.topic-item');
+
+    items.forEach(item => {
+      const key = item.dataset.key;
+      const cb = item.querySelector('input[type="checkbox"]');
+
+      if (state[key]) {
+        cb.checked = true;
+        item.classList.add('checked');
+      }
+
+      cb.addEventListener('change', () => {
+        const s = loadState();
+        s[key] = cb.checked;
+        saveState(s);
+        item.classList.toggle('checked', cb.checked);
+        updateProgress();
+      });
+    });
+
+    updateProgress();
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY);
+      items.forEach(item => {
+        item.querySelector('input[type="checkbox"]').checked = false;
+        item.classList.remove('checked');
+      });
+      updateProgress();
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>
